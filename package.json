@@ -20,6 +20,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
+  "repository":"https://github.com/keiyin-wong/packtool-cli",
   "author": "",
   "license": "ISC",
   "dependencies": {
