@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+    <!-- Definition of common elements -->
+    <xs:element name="outputFolder" type="xs:string" />
+    <xs:element name="sourceFolderPrefix" type="xs:string" />
+    <xs:element name="path">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:minLength value="1" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="logLevel">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="info" />
+                <xs:enumeration value="debug" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <!-- End of definition of common elements -->
+
+
+    <!-- Definition of main object-->
+    <xs:element name="webpack">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="sourceFolderPrefix" minOccurs="0"/>
+                <xs:element ref="outputFolder" />
+                <xs:element ref="entry" />
+                <xs:element ref="assets" />
+                <xs:element ref="htmlWebPackPlugin" minOccurs="0" />
+                <xs:element ref="loaders" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- End of definition of main object-->
+
+    <!-- Definition of entry object-->
+    <xs:element name="entry">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="outputFolder" minOccurs="0" type="xs:string"/>
+                <xs:element name="cssOutputFolder" type="xs:string" />
+                <xs:element name="includes">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="include" minOccurs="1" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="path">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:string">
+                                                    <xs:pattern value=".*\.js" />
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+                                        <xs:element name="outputPath" minOccurs="0" type="xs:string" />
+                                        <xs:element name="injectHead" minOccurs="0" type="xs:boolean" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>   
+                </xs:element>
+                <xs:element ref="excludes" minOccurs="0" />
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="assets">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="pattern" type="xs:string" />
+                <xs:element name="outputFolder" type="xs:string" />
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+   <!-- End of definition of entry object-->
+
+
+    <!-- Definition of html-webpack-plugin object-->
+    <xs:element name="htmlWebPackPlugin">
+        <xs:annotation>
+            <xs:documentation source="description">
+                <![CDATA[
+                The html-webpack-plugin generates an jsp file with <script> and <link> tags
+                injected to point to the generated bundles.
+                ]]>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:all>
+                <xs:element ref="includes" />
+                <xs:element ref="excludes" minOccurs="0" />
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="includes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="include" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="publicPath">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:minLength value="1" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="include">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="sourceFolderPrefix" minOccurs="0" />
+                <xs:element ref="path" />
+                <xs:element ref="chunks" maxOccurs="unbounded"/>
+                <xs:element ref="publicPath" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:attribute name="includeSelf" type="xs:boolean" />
+    <xs:attribute name="inject">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="false" />
+                <xs:enumeration value="head" />
+                <xs:enumeration value="body" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="scriptLoading">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="blocking" />
+                <xs:enumeration value="defer" />
+                <xs:enumeration value="module" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+
+    <xs:element name="chunk" type="xs:string" />
+
+    <xs:element name="chunks">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="chunk" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation source="description">
+                            Include the chunk in html or jsp file while processing the file
+                        </xs:documentation>
+                      </xs:annotation>
+                </xs:element>
+            </xs:sequence> 
+            <xs:attribute ref="includeSelf" use="required">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Indicates whether includes self js file, by default is true.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute ref="inject">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        The script tag location. head, body, false, by default is body.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute ref="scriptLoading">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        blocking, defer, module. By default is blocking
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType> 
+    </xs:element>
+    <xs:element name="exclude">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:minLength value="1" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+    <xs:element name="excludes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="exclude" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- End of definition of html-webpack-plugin object-->
+
+    <!-- Definition of Loaders object-->
+    <xs:element name="loaders">
+        <xs:annotation>
+            <xs:documentation source="description">
+                Extra loaders for webpack
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:choice minOccurs="1">
+                <xs:element ref="stringReplaceLoader" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="stringReplaceLoader">
+        <xs:annotation>
+            <xs:documentation source="description">
+                Replace string in certain file. You can use it to exclude certain import statement in file.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="test" type="xs:string" />
+                <xs:element name="includes">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="include" minOccurs="1" maxOccurs="unbounded" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation source="description">
+                                        The file name to be processed. For example
+                                        node_modules/@unified/uc-admin-ui/src/assets/js/index.js
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="options" type="stringReplaceLoaderOptions" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="stringReplaceLoaderOptions">
+        <xs:all>
+            <xs:element name="multiple" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation source="description">
+                        Whether to replace string multiple times in one file.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="replace" minOccurs="1" maxOccurs="unbounded">
+                           <xs:complexType>
+                               <xs:all>
+                                   <xs:element name="search" type="xs:string" />
+                                   <xs:element name="replace" type="xs:string" />
+                               </xs:all>
+                           </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <!-- End of definition of Loaders object-->
+</xs:schema>
