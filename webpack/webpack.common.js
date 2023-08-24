@@ -81,10 +81,10 @@ module.exports = function(logger, dirname, confObj) {
                     test: /\.(js|jsx)$/,
                     loader: "babel-loader",
                     options: {
-                        plugins: [
-                            "@babel/plugin-syntax-jsx",
-                            "./jquery_jsx_transform.js"
-                        ],
+                        // plugins: [
+                        //     "@babel/plugin-syntax-jsx",
+                        //     path.resolve(__dirname, "../plugins/jquery_jsx_transform.js"),
+                        // ],
                         presets: [
                             ["@babel/preset-env", {modules: false}] // Dont convert module syntax to commonjs. If you set the modules to "commonsjs", you will lose the tree shaking.
                         ],
